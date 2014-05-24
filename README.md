@@ -1,7 +1,7 @@
 Usage Instructions
 ==================
 
-- Look here for (full background on this tool)[http://www.openstreetmap.org/user/dalek2point3/diary/22083]
+- Look here for full background on this tool -- http://www.openstreetmap.org/user/dalek2point3/diary/22083
 
    `make`
 
