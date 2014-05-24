@@ -1,6 +1,8 @@
 Usage Instructions
 ==================
 
+- Look here for (full background on this tool)[http://www.openstreetmap.org/user/dalek2point3/diary/22083]
+
    `make`
 
    `wget http://osm.personalwerk.de/full-history-extracts/2014-03-31/north-america/seattle.osh.pbf`
