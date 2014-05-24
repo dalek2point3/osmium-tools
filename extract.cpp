@@ -16,7 +16,7 @@ typedef osmium::index::map::Dummy<osmium::unsigned_object_id_type, osmium::Locat
 typedef osmium::index::map::SparseTable<osmium::unsigned_object_id_type, osmium::Location> index_pos_type;
 typedef osmium::handler::NodeLocationsForWays<index_pos_type, index_neg_type> location_handler_type;
 
-struct NamesHandler : public osmium::handler::Handler {
+struct NodeHandler : public osmium::handler::Handler {
 
   void node(const osmium::Node& node) {
     const char* amenity = node.tags().get_value_by_key("amenity");
@@ -45,6 +45,9 @@ struct NamesHandler : public osmium::handler::Handler {
       }
     }
   }
+};
+
+struct WayHandler : public osmium::handler::Handler {
 
   void way(const osmium::Way& way) {
    
@@ -67,21 +70,31 @@ struct NamesHandler : public osmium::handler::Handler {
 
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " OSMFILE TAG\n";
+    if (argc != 3) {
+        std::cerr << "Usage: " << argv[0] << " OSMFILE FTYPE\n";
         exit(1);
     }
-
-    NamesHandler names_handler;
 
     index_pos_type index_pos;
     index_neg_type index_neg;
     location_handler_type location_handler(index_pos, index_neg);
     location_handler.ignore_errors();
 
-    osmium::io::Reader reader(argv[1]);
+    //osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::node);
+    // osmium::io::Reader reader2(argv[1], osmium::osm_entity::flags::way);
 
-    osmium::apply(reader, location_handler, names_handler);
+      if(strcmp ("node",argv[2]) != 0){
+        NodeHandler node_handler;
+        osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::node);
+        osmium::apply(reader, location_handler, node_handler);
+}
+
+      if(strcmp ("way",argv[2]) != 0){
+        WayHandler way_handler;
+        osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::all);
+        osmium::apply(reader, location_handler, way_handler);
+}
+
 
 }
 
