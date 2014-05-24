@@ -83,14 +83,16 @@ int main(int argc, char* argv[]) {
     //osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::node);
     // osmium::io::Reader reader2(argv[1], osmium::osm_entity::flags::way);
 
-      if(strcmp ("node",argv[2]) != 0){
+      if(strcmp ("node",argv[2]) == 0){
         NodeHandler node_handler;
+        std::cerr << "processing node\n";
         osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::node);
         osmium::apply(reader, location_handler, node_handler);
 }
 
-      if(strcmp ("way",argv[2]) != 0){
+      if(strcmp ("way",argv[2]) == 0){
         WayHandler way_handler;
+        std::cerr << "processing way\n";
         osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::all);
         osmium::apply(reader, location_handler, way_handler);
 }
