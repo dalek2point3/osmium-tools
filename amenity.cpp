@@ -1,0 +1,90 @@
+
+// The code in this file is released into the Public Domain.
+
+#include <iostream>
+
+#include <osmium.hpp>
+#include <osmium/io/any_input.hpp>
+#include <osmium/handler.hpp>
+#include <osmium/visitor.hpp>
+#include <osmium/osm/way.hpp>
+#include <osmium/osm/ostream.hpp>
+#include <osmium/handler/node_locations_for_ways.hpp>
+#include <osmium/index/map/sparse_table.hpp>
+
+typedef osmium::index::map::Dummy<osmium::unsigned_object_id_type, osmium::Location> index_neg_type;
+typedef osmium::index::map::SparseTable<osmium::unsigned_object_id_type, osmium::Location> index_pos_type;
+typedef osmium::handler::NodeLocationsForWays<index_pos_type, index_neg_type> location_handler_type;
+
+struct NamesHandler : public osmium::handler::Handler {
+
+  void node(const osmium::Node& node) {
+    const char* amenity = node.tags().get_value_by_key("amenity");
+    if (amenity && amenity[0] != '\0') {
+      const char* name = node.tags().get_value_by_key("name");
+      const char* amenity = node.tags().get_value_by_key("amenity");
+      if (name) {
+  	std::cout << name 
+  		  << "\t" 
+  		  << amenity 
+  		  << "\t"
+  		  << node.user()
+  		  << "\t"  
+  		  << node.uid()
+  		  << "\t"  
+  		  << node.timestamp()
+  		  << "\t" 
+  		  << node.version()
+  		  << "\t" 
+  		  << node.location().lon()
+  		  << "\t" 
+  		  << node.location().lat()
+  		  << "\t" 
+  		  << node.id()
+  		  << std::endl;
+      }
+    }
+  }
+
+  void way(const osmium::Way& way) {
+   
+  const char* highway = way.tags().get_value_by_key("highway");
+
+  if (highway && highway[0] != '\0') {
+       double x = way.nodes().front().location().lat();
+       double y = way.nodes().front().location().lon();
+       std::cout << x << " " << y
+       << " " << way.tags().size() 
+       << " " << way.user() 
+       << " " << highway 
+       << " " << way.id() 
+       << " " << way.changeset() 
+       << std::endl;
+     }
+}  
+
+};
+
+
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " OSMFILE TAG\n";
+        exit(1);
+    }
+
+    NamesHandler names_handler;
+
+    index_pos_type index_pos;
+    index_neg_type index_neg;
+    location_handler_type location_handler(index_pos, index_neg);
+    location_handler.ignore_errors();
+
+    //osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::node);
+    // osmium::io::Reader reader2(argv[1], osmium::osm_entity::flags::way);
+    osmium::io::Reader reader2(argv[1]);
+
+    //    osmium::apply(reader, names_handler);
+    osmium::apply(reader2, location_handler, names_handler);
+
+}
+
