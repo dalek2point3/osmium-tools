@@ -1,8 +1,6 @@
-
 // The code in this file is released into the Public Domain.
 
 #include <iostream>
-
 #include <osmium.hpp>
 #include <osmium/io/any_input.hpp>
 #include <osmium/handler.hpp>
@@ -53,11 +51,24 @@ struct WayHandler : public osmium::handler::Handler {
    
   const char* highway = way.tags().get_value_by_key("highway");
 
-  if (highway && highway[0] != '\0') {
-       double x = way.nodes().front().location().lat();
-       double y = way.nodes().front().location().lon();
+if (highway && highway[0] != '\0') {
+
+       // std::cerr << way.nodes().front().visible();
+       double x = -1;
+       double y = -1;
+
+       for (const auto& wn : way.nodes()) {
+           if(wn.location().lon() < 200){
+               x = wn.location().lat();
+               y = wn.location().lon();
+               break;
+          }
+
+       std::cerr << "getting another node " << y << "\n";
+       }
+
        std::cout << x << " " << y
-       << " " << way.tags().size() 
+       << " " << way.version() 
        << " " << way.user() 
        << " " << highway 
        << " " << way.id() 
