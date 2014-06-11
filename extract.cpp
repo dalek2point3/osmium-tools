@@ -74,6 +74,7 @@ struct WayHandler : public osmium::handler::Handler {
     const char* access = way.tags().get_value_by_key("access");
     const char* oneway = way.tags().get_value_by_key("oneway");
     const char* maxspeed = way.tags().get_value_by_key("maxspeed");
+    const char* lanes = way.tags().get_value_by_key("lanes");
     
     if (flag!=0) {
 
@@ -103,13 +104,13 @@ struct WayHandler : public osmium::handler::Handler {
 		<< y << "\t"
 		<< way.id() << "\t"
 		<< check_null(name) << "\t" 
-		<< check_null(maxspeed) << "\t" 
 		<< check_null(tigercfcc) << "\t" 
 		<< check_null(tigercounty) << "\t" 
 		<< check_null(tigerr) << "\t" 
 		<< check_null(access) << "\t" 
 		<< check_null(oneway) << "\t" 
 		<< check_null(maxspeed) << "\t" 
+		<< check_null(lanes) << "\t" 
 		<< std::endl;
     }
   }  
