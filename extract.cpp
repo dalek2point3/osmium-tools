@@ -14,10 +14,12 @@ typedef osmium::index::map::Dummy<osmium::unsigned_object_id_type, osmium::Locat
 typedef osmium::index::map::SparseTable<osmium::unsigned_object_id_type, osmium::Location> index_pos_type;
 typedef osmium::handler::NodeLocationsForWays<index_pos_type, index_neg_type> location_handler_type;
 
+// TODO: deal with this hack
+const char* na = "NA";
 
 const char* check_null(const char* &val) {
   const char* name = val;
-  const char* na = "NA";
+  // const char* na = "NA";
 
   if (name){
     return name;
@@ -31,13 +33,24 @@ const char* check_null(const char* &val) {
 struct NodeHandler : public osmium::handler::Handler {
 
   void node(const osmium::Node& node) {
-    const char* amenity = node.tags().get_value_by_key("amenity");
-    if (amenity && amenity[0] != '\0') {
-      const char* name = node.tags().get_value_by_key("name");
-      const char* amenity = node.tags().get_value_by_key("amenity");
 
-      std::cout << check_null(name) << "\t" 
-		<< amenity << "\t" 
+    // filter tags
+    const char* amenity = node.tags().get_value_by_key("amenity");
+    const char* addr = node.tags().get_value_by_key("addr:housenumber");
+    const char* place = node.tags().get_value_by_key("place");
+
+    int flag = (check_null(amenity) != na || check_null(addr) != na || check_null(place)!=na);
+
+    // additional tags
+    const char* name = node.tags().get_value_by_key("name");
+    const char* gnisfid = node.tags().get_value_by_key("gnis:feature_id");
+    const char* gnisfcode = node.tags().get_value_by_key("gnis:fcode");
+
+    if (flag!=0) {
+
+      std::cout << check_null(amenity) << "\t" 
+		<< check_null(addr) << "\t" 
+		<< check_null(place) << "\t" 
 		<< node.user() << "\t"
 		<< node.uid() << "\t"
 		<< node.timestamp() << "\t"
@@ -45,7 +58,10 @@ struct NodeHandler : public osmium::handler::Handler {
 		<< node.changeset() << "\t"
 		<< node.location().lon() << "\t"
 		<< node.location().lat() << "\t"
-		<< node.id()
+		<< node.id() << "\t"
+		<< check_null(name) << "\t" 
+		<< check_null(gnisfid) << "\t" 
+		<< check_null(gnisfcode) << "\t" 
 		<< std::endl;
     }
   }
@@ -54,9 +70,6 @@ struct NodeHandler : public osmium::handler::Handler {
 struct WayHandler : public osmium::handler::Handler {
 
   void way(const osmium::Way& way) {
-
-    // TODO: deal with this hack
-    const char* na = "NA";
 
     // TODO: systematize this -- some "filter" keys and some "tags"
     const char* amenity = way.tags().get_value_by_key("amenity");
