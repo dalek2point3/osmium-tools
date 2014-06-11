@@ -57,8 +57,7 @@ struct WayHandler : public osmium::handler::Handler {
 	  y = wn.location().lon();
 	  break;
 	}
-
-	std::cerr << "getting another node " << y << "\n";
+	// std::cerr << "getting another node " << y << "\n";
       }
 
       if (name){
@@ -86,8 +85,8 @@ struct WayHandler : public osmium::handler::Handler {
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " OSMFILE FTYPE\n";
-        exit(1);
+      std::cerr << "Usage: " << argv[0] << " OSMFILE FEATURETYPE\n";
+      exit(1);
     }
 
     index_pos_type index_pos;
@@ -95,22 +94,19 @@ int main(int argc, char* argv[]) {
     location_handler_type location_handler(index_pos, index_neg);
     location_handler.ignore_errors();
 
-    //osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::node);
-    // osmium::io::Reader reader2(argv[1], osmium::osm_entity::flags::way);
+    if(strcmp ("node",argv[2]) == 0){
+      NodeHandler node_handler;
+      std::cerr << "processing node\n";
+      osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::node);
+      osmium::apply(reader, location_handler, node_handler);
+    }
 
-      if(strcmp ("node",argv[2]) == 0){
-        NodeHandler node_handler;
-        std::cerr << "processing node\n";
-        osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::node);
-        osmium::apply(reader, location_handler, node_handler);
-}
-
-      if(strcmp ("way",argv[2]) == 0){
-        WayHandler way_handler;
-        std::cerr << "processing way\n";
-        osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::all);
-        osmium::apply(reader, location_handler, way_handler);
-}
+    if(strcmp ("way",argv[2]) == 0){
+      WayHandler way_handler;
+      std::cerr << "processing way\n";
+      osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::all);
+      osmium::apply(reader, location_handler, way_handler);
+    }
 
 
 }
