@@ -22,22 +22,15 @@ struct NodeHandler : public osmium::handler::Handler {
       const char* name = node.tags().get_value_by_key("name");
       const char* amenity = node.tags().get_value_by_key("amenity");
       if (name) {
-  	std::cout << name 
-  		  << "\t" 
-  		  << amenity 
-  		  << "\t"
-  		  << node.user()
-  		  << "\t"  
-  		  << node.uid()
-  		  << "\t"  
-  		  << node.timestamp()
-  		  << "\t" 
-  		  << node.version()
-  		  << "\t" 
-  		  << node.location().lon()
-  		  << "\t" 
-  		  << node.location().lat()
-  		  << "\t" 
+  	std::cout << name << "\t" 
+  		  << amenity << "\t" 
+  		  << node.user() << "\t"
+  		  << node.uid() << "\t"
+  		  << node.timestamp() << "\t"
+  		  << node.version() << "\t"
+  		  << node.changeset() << "\t"
+  		  << node.location().lon() << "\t"
+  		  << node.location().lat() << "\t"
   		  << node.id()
   		  << std::endl;
       }
@@ -49,34 +42,45 @@ struct WayHandler : public osmium::handler::Handler {
 
   void way(const osmium::Way& way) {
    
-  const char* highway = way.tags().get_value_by_key("highway");
+    const char* highway = way.tags().get_value_by_key("highway");
+    const char* name = way.tags().get_value_by_key("name");
+    
+    if (highway && highway[0] != '\0') {
 
-if (highway && highway[0] != '\0') {
+      // std::cerr << way.nodes().front().visible();
+      double x = -1;
+      double y = -1;
+    
+      for (const auto& wn : way.nodes()) {
+	if(wn.location().lon() < 200){
+	  x = wn.location().lat();
+	  y = wn.location().lon();
+	  break;
+	}
 
-       // std::cerr << way.nodes().front().visible();
-       double x = -1;
-       double y = -1;
+	std::cerr << "getting another node " << y << "\n";
+      }
 
-       for (const auto& wn : way.nodes()) {
-           if(wn.location().lon() < 200){
-               x = wn.location().lat();
-               y = wn.location().lon();
-               break;
-          }
+      if (name){
+	std::cout << name << "\t";
+      }
+      else {
+	std::cout << "NA" << "\t";
+      }
 
-       std::cerr << "getting another node " << y << "\n";
-       }
-
-       std::cout << x << " " << y
-       << " " << way.version() 
-       << " " << way.user() 
-       << " " << highway 
-       << " " << way.id() 
-       << " " << way.changeset() 
-       << std::endl;
-     }
-}  
-
+      std::cout	<< highway << "\t" 
+		<< way.user() << "\t"
+		<< way.uid() << "\t"
+		<< way.timestamp() << "\t"
+		<< way.version() << "\t"
+		<< way.changeset() << "\t"
+		<< x << "\t"
+		<< y << "\t"
+		<< way.id()
+		<< std::endl;
+      
+    }
+  }  
 };
 
 
