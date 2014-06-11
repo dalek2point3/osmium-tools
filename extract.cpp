@@ -19,7 +19,7 @@ const char* check_null(const char* &val) {
   const char* name = val;
   const char* na = "NA";
 
-  std::cout << "checking name now";
+  // std::cout << "checking name now";
   if (name){
     return name;
   }
@@ -75,14 +75,8 @@ struct WayHandler : public osmium::handler::Handler {
 	// std::cerr << "getting another node " << y << "\n";
       }
 
-      if (name){
-	std::cout << name << "\t";
-      }
-      else {
-	std::cout << "NA" << "\t";
-      }
-
-      std::cout	<< highway << "\t" 
+      std::cout	<< check_null(name) << "\t" 
+		<< highway << "\t" 
 		<< way.user() << "\t"
 		<< way.uid() << "\t"
 		<< way.timestamp() << "\t"
@@ -122,14 +116,6 @@ int main(int argc, char* argv[]) {
       osmium::io::Reader reader(argv[1], osmium::osm_entity::flags::all);
       osmium::apply(reader, location_handler, way_handler);
     }
-
-
-    if(strcmp ("test",argv[2]) == 0){
-      const char* name = argv[1];
-      check_null(name);
-     
-    }
-
 
 }
 
