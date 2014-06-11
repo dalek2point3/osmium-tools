@@ -19,7 +19,6 @@ const char* check_null(const char* &val) {
   const char* name = val;
   const char* na = "NA";
 
-  // std::cout << "checking name now";
   if (name){
     return name;
   }
@@ -55,11 +54,28 @@ struct NodeHandler : public osmium::handler::Handler {
 struct WayHandler : public osmium::handler::Handler {
 
   void way(const osmium::Way& way) {
-   
+
+    // TODO: deal with this hack
+    const char* na = "NA";
+
+    // TODO: systematize this -- some "filter" keys and some "tags"
+    const char* amenity = way.tags().get_value_by_key("amenity");
     const char* highway = way.tags().get_value_by_key("highway");
+    const char* building = way.tags().get_value_by_key("building");
+    const char* parking = way.tags().get_value_by_key("parking");
+
+    int flag = (check_null(highway) != na || check_null(amenity) != na || check_null(building)!=na || check_null(parking) != na);
+
+    // Other tags
     const char* name = way.tags().get_value_by_key("name");
+    const char* tigercfcc = way.tags().get_value_by_key("tiger:cfcc");
+    const char* tigercounty = way.tags().get_value_by_key("tiger:county");
+    const char* tigerr = way.tags().get_value_by_key("tiger:reviewed");
+    const char* access = way.tags().get_value_by_key("access");
+    const char* oneway = way.tags().get_value_by_key("oneway");
+    const char* maxspeed = way.tags().get_value_by_key("maxspeed");
     
-    if (highway && highway[0] != '\0') {
+    if (flag!=0) {
 
       // std::cerr << way.nodes().front().visible();
       double x = -1;
@@ -74,8 +90,10 @@ struct WayHandler : public osmium::handler::Handler {
 	// std::cerr << "getting another node " << y << "\n";
       }
 
-      std::cout	<< check_null(name) << "\t" 
-		<< highway << "\t" 
+      std::cout	<< check_null(highway) << "\t" 
+		<< check_null(amenity) << "\t" 
+		<< check_null(building) << "\t" 
+		<< check_null(parking) << "\t" 
 		<< way.user() << "\t"
 		<< way.uid() << "\t"
 		<< way.timestamp() << "\t"
@@ -83,9 +101,16 @@ struct WayHandler : public osmium::handler::Handler {
 		<< way.changeset() << "\t"
 		<< x << "\t"
 		<< y << "\t"
-		<< way.id()
+		<< way.id() << "\t"
+		<< check_null(name) << "\t" 
+		<< check_null(maxspeed) << "\t" 
+		<< check_null(tigercfcc) << "\t" 
+		<< check_null(tigercounty) << "\t" 
+		<< check_null(tigerr) << "\t" 
+		<< check_null(access) << "\t" 
+		<< check_null(oneway) << "\t" 
+		<< check_null(maxspeed) << "\t" 
 		<< std::endl;
-      
     }
   }  
 };
