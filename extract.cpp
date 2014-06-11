@@ -36,19 +36,18 @@ struct NodeHandler : public osmium::handler::Handler {
     if (amenity && amenity[0] != '\0') {
       const char* name = node.tags().get_value_by_key("name");
       const char* amenity = node.tags().get_value_by_key("amenity");
-      if (name) {
-  	std::cout << name << "\t" 
-  		  << amenity << "\t" 
-  		  << node.user() << "\t"
-  		  << node.uid() << "\t"
-  		  << node.timestamp() << "\t"
-  		  << node.version() << "\t"
-  		  << node.changeset() << "\t"
-  		  << node.location().lon() << "\t"
-  		  << node.location().lat() << "\t"
-  		  << node.id()
-  		  << std::endl;
-      }
+
+      std::cout << check_null(name) << "\t" 
+		<< amenity << "\t" 
+		<< node.user() << "\t"
+		<< node.uid() << "\t"
+		<< node.timestamp() << "\t"
+		<< node.version() << "\t"
+		<< node.changeset() << "\t"
+		<< node.location().lon() << "\t"
+		<< node.location().lat() << "\t"
+		<< node.id()
+		<< std::endl;
     }
   }
 };
